@@ -15,4 +15,4 @@ just project
 
 Run `just` to list the other recipes. Run `just ci` before opening a pull request.
 
-Requires Xcode with the iOS 18+ SDK.
+Requires Xcode 27.2 or later. The app targets iOS 27.

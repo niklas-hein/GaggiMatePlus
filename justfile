@@ -10,6 +10,10 @@ scheme := "GaggiMatePlus"
 default:
     @{{ just_executable() }} --list --unsorted
 
+# SwiftLint in strict mode: every warning fails (config: .swiftlint.yml).
+lint:
+    swiftlint lint --strict --quiet
+
 # Generate the Xcode workspace with Tuist.
 project:
     tuist generate --no-open
@@ -22,5 +26,5 @@ build: project
 test module="": project
     dest="$(scripts/ios-destination.sh)" && xcodebuild test -workspace {{ workspace }} -scheme {{ if module == "" { scheme } else { module } }} -destination "$dest" 2>&1 | xcbeautify --disable-colored-output
 
-# Local CI, the same steps as GitHub CI's jobs: build the app, then run every module's unit tests.
-ci: build test
+# Local CI, the same steps as GitHub CI's jobs: lint, build the app, then run every module's unit tests.
+ci: lint build test
