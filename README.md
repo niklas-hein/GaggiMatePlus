@@ -6,10 +6,11 @@ A native iOS client for [GaggiMate](https://github.com/jniebuhr/gaggimate), the 
 
 ## Building
 
+The Xcode workspace is generated with [Tuist](https://tuist.dev), pinned with [mise](https://mise.jdx.dev):
+
 ```sh
-brew install xcodegen
-xcodegen generate
-open GaggiMatePlus.xcodeproj
+mise install
+tuist generate
 ```
 
 Requires Xcode with the iOS 18+ SDK.
