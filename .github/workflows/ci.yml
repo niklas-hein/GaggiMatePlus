@@ -8,14 +8,16 @@ on:
 permissions:
   contents: read
 
+# One run per branch: a new push cancels the branch's older run.
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
   build:
     name: Build
     runs-on: macos-26
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v5
@@ -24,6 +26,10 @@ jobs:
   test:
     name: Test ${{ matrix.module }}
     runs-on: macos-26
+    timeout-minutes: 20
+    env:
+      # A simulator the runner image ships with; xcodebuild boots it.
+      IOS_DESTINATION: platform=iOS Simulator,name=iPhone 17,OS=latest
     strategy:
       fail-fast: false
       matrix:
@@ -40,6 +46,7 @@ jobs:
     needs: [build, test]
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - env:
           BUILD: ${{ needs.build.result }}
