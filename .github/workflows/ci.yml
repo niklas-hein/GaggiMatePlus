@@ -14,35 +14,41 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Xcode 27.2 on the xcode-27 image, the same build as local development.
-  DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
+  # The Xcode of the runner the Mac jobs land on (see runs-on): 27.2 on GitHub's xcode-27 image, the same build
+  # as local development; 27.0 on nell-remote until it gets 27.2.
+  DEVELOPER_DIR: ${{ github.event.pull_request.head.repo.fork && '/Applications/Xcode_27.2.app/Contents/Developer' || '/Applications/Xcode-27.0.0.app/Contents/Developer' }}
 
 jobs:
   lint:
     name: Lint
-    runs-on: xcode-27
+    # nell-remote, the owner's self-hosted Mac, except for pull requests from forks, which use GitHub's xcode-27
+    # image. A fork's pull request runs its own copy of this file, so the owner reviews its workflow changes
+    # before approving the run.
+    runs-on: &mac-runner ${{ github.event.pull_request.head.repo.fork && 'xcode-27' || 'nell-remote' }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v5
+        with:
+          # Each nell-remote runner keeps its tools in its own MISE_DATA_DIR, so only GitHub's runners need the cache.
+          cache: ${{ runner.environment == 'github-hosted' }}
       - run: just lint
 
   build:
     name: Build
-    runs-on: xcode-27
+    runs-on: *mac-runner
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v5
+        with:
+          cache: ${{ runner.environment == 'github-hosted' }}
       - run: just build
 
   test:
     name: Test ${{ matrix.module }}
-    runs-on: xcode-27
+    runs-on: *mac-runner
     timeout-minutes: 20
-    env:
-      # A simulator the runner image ships with; xcodebuild boots it.
-      IOS_DESTINATION: platform=iOS Simulator,name=iPhone 18 Pro
     strategy:
       fail-fast: false
       matrix:
@@ -51,7 +57,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v5
+        with:
+          cache: ${{ runner.environment == 'github-hosted' }}
       - run: just test ${{ matrix.module }}
+        env:
+          # GitHub's image ships this simulator, and xcodebuild boots it. On nell-remote, each runner has a simulator
+          # of its own that stays booted between runs (scripts/ios-destination.sh), so parallel jobs never share one.
+          IOS_DESTINATION: ${{ runner.environment == 'github-hosted' && 'platform=iOS Simulator,name=iPhone 18 Pro' || '' }}
+          IOS_SIMULATOR: GaggiMatePlus-CI-${{ runner.name }}
 
   # The check main requires. It passes only when every job above passed, so new jobs need no ruleset change.
   ci:
