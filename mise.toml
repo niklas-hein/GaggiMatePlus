@@ -1,0 +1,6 @@
+# Pinned tool versions. mise only installs tools; every command runs through `just`.
+
+[tools]
+just = "1.58.0"
+tuist = "4.214.0"
+xcbeautify = "3.2.1"

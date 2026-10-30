@@ -62,6 +62,8 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 
 
-# XcodeGen
+# Tuist
 *.xcodeproj
+*.xcworkspace
+Derived/
 build/
