@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
+  ci:
+    name: CI
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
