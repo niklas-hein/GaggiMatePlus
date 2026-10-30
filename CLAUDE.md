@@ -43,7 +43,7 @@ Every command runs through `just` (see `justfile`); mise only pins tool versions
 
 ## Branches and releases
 
-- `main` is protected: changes land only through pull requests, and GitHub CI (`Test`, which runs `just ci`) must pass. Pull requests from contributors need approval from the code owner.
+- `main` is protected: changes land only through pull requests, and GitHub CI (`Test`, which runs `just ci`) must pass. No approving review is required: only the owner has write access, so only they can merge, and `CODEOWNERS` requests their review on contributor pull requests.
 - Releases are cut by pushing a `v*` tag (for example `v1.0.0`) on a commit on `main`. The release workflow creates the GitHub release with generated notes.
 
 ## GaggiMate WebSocket API
