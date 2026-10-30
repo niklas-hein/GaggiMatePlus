@@ -30,15 +30,20 @@ NetworkingTests     ──> Networking / Models
 
 ## Build and test
 
-```sh
-mise install
-tuist generate --no-open
-tuist test GaggiMatePlus
-```
+Every command runs through `just` (see `justfile`); mise only pins tool versions (`mise.toml`). First time: `mise install`.
+
+**Local CI:** `just ci`
+
+- `just`: list recipes.
+- `just project`: generate the Xcode workspace with Tuist.
+- `just build`: build the app for the simulator.
+- `just test`: run the unit tests.
+- `just ci`: local CI, the same command GitHub CI runs. Run it, and make sure it passes, before creating or updating a pull request.
+- Tests use a simulator named `GaggiMatePlus`, created if missing and left booted so test runs skip the boot. Override with `IOS_SIMULATOR=<name>` or `IOS_DESTINATION=<xcodebuild destination>`.
 
 ## Branches and releases
 
-- `main` is protected: changes land only through pull requests, and CI (`Test`) must pass. Pull requests from contributors need approval from the code owner.
+- `main` is protected: changes land only through pull requests, and GitHub CI (`Test`, which runs `just ci`) must pass. Pull requests from contributors need approval from the code owner.
 - Releases are cut by pushing a `v*` tag (for example `v1.0.0`) on a commit on `main`. The release workflow creates the GitHub release with generated notes.
 
 ## GaggiMate WebSocket API
