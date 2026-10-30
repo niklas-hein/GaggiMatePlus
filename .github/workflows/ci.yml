@@ -13,10 +13,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: CI
+  build:
+    name: Build
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v5
-      - run: just ci
+      - run: just build
+
+  test:
+    name: Test ${{ matrix.module }}
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every module with a test target (`<Module>/Tests` and a scheme in Project.swift).
+        module: [Models, Networking]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v5
+      - run: just test ${{ matrix.module }}
+
+  # The check main requires. It passes only when every job above passed, so new jobs need no ruleset change.
+  ci:
+    name: CI
+    needs: [build, test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          BUILD: ${{ needs.build.result }}
+          TEST: ${{ needs.test.result }}
+        run: |
+          echo "Build: $BUILD, Test: $TEST"
+          [ "$BUILD" = success ] && [ "$TEST" = success ]

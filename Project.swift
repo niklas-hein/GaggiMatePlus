@@ -30,6 +30,15 @@ func tests(for name: String, dependencies: [TargetDependency]) -> Target {
     )
 }
 
+/// A scheme that builds one module and runs its tests, for `just test <name>` and that module's CI job.
+func testScheme(for name: String) -> Scheme {
+    .scheme(
+        name: name,
+        buildAction: .buildAction(targets: [.target(name)]),
+        testAction: .targets([.testableTarget(target: .target("\(name)Tests"))])
+    )
+}
+
 let project = Project(
     name: "GaggiMatePlus",
     options: .options(automaticSchemesOptions: .disabled),
@@ -74,5 +83,7 @@ let project = Project(
             testAction: .targets(["ModelsTests", "NetworkingTests"]),
             runAction: .runAction(executable: "GaggiMatePlus")
         ),
+        testScheme(for: "Models"),
+        testScheme(for: "Networking"),
     ]
 )

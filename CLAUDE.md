@@ -10,7 +10,7 @@ Native iOS client for the [GaggiMate](https://github.com/jniebuhr/gaggimate) esp
 
 ## Modules
 
-Every module is a static framework defined in `Project.swift`, with sources in `<Module>/Sources` and Swift Testing tests in `<Module>/Tests`. The `GaggiMatePlus` scheme runs all tests. Every direct dependency:
+Every module is a static framework defined in `Project.swift`, with sources in `<Module>/Sources` and Swift Testing tests in `<Module>/Tests`. The `GaggiMatePlus` scheme runs all tests; each module with tests also has a scheme of its own (`testScheme(for:)`) and a `Test <Module>` CI job. A new test target needs both: the scheme in `Project.swift` and the module in the test matrix in `.github/workflows/ci.yml`. Every direct dependency:
 
 ```text
 GaggiMatePlus (app) ──> UI / Networking / DesignSystem / Models
@@ -37,13 +37,13 @@ Every command runs through `just` (see `justfile`); mise only pins tool versions
 - `just`: list recipes.
 - `just project`: generate the Xcode workspace with Tuist.
 - `just build`: build the app for the simulator.
-- `just test`: run the unit tests.
-- `just ci`: local CI, the same command GitHub CI runs. Run it, and make sure it passes, before creating or updating a pull request.
+- `just test`: run every module's unit tests. `just test <Module>` (for example `just test Models`) runs one module's.
+- `just ci`: local CI, the same steps as GitHub CI: `just build`, then `just test`. Run it, and make sure it passes, before creating or updating a pull request.
 - Tests use a simulator named `GaggiMatePlus`, created if missing and left booted so test runs skip the boot. Override with `IOS_SIMULATOR=<name>` or `IOS_DESTINATION=<xcodebuild destination>`.
 
 ## Branches and releases
 
-- `main` is protected: changes land only through pull requests, and GitHub CI (the `CI` check, which runs `just ci`) must pass. No approving review is required: only the owner has write access, so only they can merge, and `CODEOWNERS` requests their review on contributor pull requests.
+- `main` is protected: changes land only through pull requests, and GitHub CI must pass. Its `Build` job runs `just build` and each `Test <Module>` job runs `just test <Module>`, so a failure names the module; the `CI` job, the required check, passes only when all of them do. No approving review is required: only the owner has write access, so only they can merge, and `CODEOWNERS` requests their review on contributor pull requests.
 - Releases are cut by pushing a `v*` tag (for example `v1.0.0`) on a commit on `main`. The release workflow creates the GitHub release with generated notes.
 
 ## GaggiMate WebSocket API

@@ -18,9 +18,9 @@ project:
 build: project
     xcodebuild build -workspace {{ workspace }} -scheme {{ scheme }} -destination "generic/platform=iOS Simulator" 2>&1 | xcbeautify --disable-colored-output
 
-# Unit tests on a simulator. Set IOS_DESTINATION or IOS_SIMULATOR to override.
-test: project
-    dest="$(scripts/ios-destination.sh)" && xcodebuild test -workspace {{ workspace }} -scheme {{ scheme }} -destination "$dest" 2>&1 | xcbeautify --disable-colored-output
+# Unit tests on a simulator: every module's, or one module's with `just test <module>`. IOS_SIMULATOR or IOS_DESTINATION override the simulator.
+test module="": project
+    dest="$(scripts/ios-destination.sh)" && xcodebuild test -workspace {{ workspace }} -scheme {{ if module == "" { scheme } else { module } }} -destination "$dest" 2>&1 | xcbeautify --disable-colored-output
 
-# Local CI, the same command GitHub CI runs: generate the workspace, build the app and run the unit tests.
-ci: test
+# Local CI, the same steps as GitHub CI's jobs: build the app, then run every module's unit tests.
+ci: build test
