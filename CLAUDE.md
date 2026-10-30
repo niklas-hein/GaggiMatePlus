@@ -46,6 +46,22 @@ Every command runs through `just` (see `justfile`); mise only pins tool versions
 - `main` is protected: changes land only through pull requests, and GitHub CI must pass. Its `Build` job runs `just build` and each `Test <Module>` job runs `just test <Module>`, so a failure names the module; the `CI` job, the required check, passes only when all of them do. No approving review is required: only the owner has write access, so only they can merge, and `CODEOWNERS` requests their review on contributor pull requests.
 - Releases are cut by pushing a `v*` tag (for example `v1.0.0`) on a commit on `main`. The release workflow creates the GitHub release with generated notes.
 
+## Commits and pull request titles
+
+Every commit subject and every pull request title follows [Conventional Commits](https://www.conventionalcommits.org): `<type>: <description>`, optionally with a scope, `<type>(<scope>): <description>`. Write the description in lowercase and the imperative, with no trailing period: `feat: add the brew screen`, `fix(networking): retry the handshake`. Put `!` before the colon for a breaking change. The `Conventional Commits` check, required on `main`, enforces the format for a pull request's title and all of its commits (`scripts/check-conventional-commits.sh`). Squash merges use the title as the commit title on `main`.
+
+- `feat`: a new feature.
+- `fix`: a bug fix.
+- `docs`: documentation only.
+- `style`: formatting with no behaviour change.
+- `refactor`: a code change that neither fixes a bug nor adds a feature.
+- `perf`: a performance improvement.
+- `test`: adding or fixing tests.
+- `build`: the build system, project generation or dependencies (Tuist, mise, the justfile).
+- `ci`: CI workflows and checks.
+- `chore`: anything else that doesn't touch the app's code.
+- `revert`: reverts an earlier change.
+
 ## GaggiMate WebSocket API
 
 - Connect to `ws://<host>/ws`. No auth.
