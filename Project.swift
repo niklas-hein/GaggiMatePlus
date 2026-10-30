@@ -2,7 +2,7 @@ import ProjectDescription
 
 let bundleId = "dev.niklashein.gaggimateplus"
 let destinations: Destinations = [.iPhone, .iPad]
-let deploymentTargets: DeploymentTargets = .iOS("18.0")
+let deploymentTargets: DeploymentTargets = .iOS("27.0")
 
 /// A static framework with its sources in `<name>/Sources`.
 func module(_ name: String, dependencies: [TargetDependency] = []) -> Target {
@@ -45,6 +45,16 @@ let project = Project(
     settings: .settings(base: [
         "SWIFT_VERSION": "6.0",
         "SWIFT_STRICT_CONCURRENCY": "complete",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_STRICT_MEMORY_SAFETY": "YES",
+        // Every upcoming feature that Swift 6 mode does not turn on yet.
+        "SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY": "YES",
+        "SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT": "YES",
+        "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+        "SWIFT_UPCOMING_FEATURE_INFER_ISOLATED_CONFORMANCES": "YES",
+        "SWIFT_UPCOMING_FEATURE_NONISOLATED_NONSENDING_BY_DEFAULT": "YES",
+        // Xcode has no build setting for this one.
+        "OTHER_SWIFT_FLAGS": "$(inherited) -enable-upcoming-feature ImmutableWeakCaptures",
     ]),
     targets: [
         // The composition root: wires Networking into the Models store and hands it to the UI.
@@ -57,7 +67,8 @@ let project = Project(
             infoPlist: .extendingDefault(with: [
                 "CFBundleDisplayName": "GaggiMate+",
                 "UILaunchScreen": [:],
-                "NSLocalNetworkUsageDescription": "GaggiMate+ connects to your GaggiMate controller on the local network.",
+                "NSLocalNetworkUsageDescription":
+                    "GaggiMate+ connects to your GaggiMate controller on the local network.",
                 "NSBonjourServices": ["_gaggimate._tcp"], // placeholder
                 "NSAppTransportSecurity": ["NSAllowsLocalNetworking": true],
             ]),

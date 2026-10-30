@@ -1,0 +1,69 @@
+# SwiftLint config, adapted from Mastermind. `just lint` runs it with --strict, so every warning fails.
+included:
+  - App
+  - DesignSystem
+  - Models
+  - Networking
+  - UI
+  - Project.swift
+  - Tuist.swift
+excluded:
+  - Derived
+line_length:
+  warning: 120
+  error: 160
+trailing_comma:
+  mandatory_comma: true
+
+# Tokens only: UI code uses DesignSystem tokens, never literal numbers, colours or fonts, and spells out
+# SwiftUI's implicit defaults. DesignSystem itself defines the values, so it is exempt.
+custom_rules:
+  token_number_literal:
+    name: "Tokens only: number"
+    regex: '(\.(padding|opacity|blur)\(\s*(\.\w+\s*,\s*)?|\b(spacing|width|height|minWidth|idealWidth|maxWidth|minHeight|idealHeight|maxHeight|cornerRadius|radius|lineWidth|x|y|size|duration)\s*:\s*)-?(0*[1-9][0-9]*(\.[0-9]+)?|0*\.[0-9]*[1-9][0-9]*)'
+    message: "Use a DesignSystem token; 0 is the only allowed literal."
+    excluded: '(^|/)DesignSystem/'
+    excluded_match_kinds: [comment, doccomment, string]
+    severity: error
+  token_color_literal:
+    name: "Tokens only: colour initialiser"
+    regex: '\b(Color|UIColor)\s*\(|#colorLiteral'
+    message: "Use a DesignSystem colour token instead of a colour initialiser."
+    excluded: '(^|/)DesignSystem/'
+    excluded_match_kinds: [comment, doccomment, string]
+    severity: error
+  token_system_color:
+    name: "Tokens only: system colour"
+    regex: '\bColor\.(red|orange|yellow|green|mint|teal|cyan|blue|indigo|purple|pink|brown|gray|white|black|primary|secondary|accentColor)\b|(?<![\w)\]])(?<!buttonStyle\()\.(red|orange|yellow|green|mint|teal|cyan|blue|indigo|purple|pink|brown|gray|white|black|primary|secondary|tertiary|quaternary|quinary|accentColor)\b'
+    message: "Use a DesignSystem colour token instead of a system colour or style."
+    excluded: '(^|/)DesignSystem/'
+    excluded_match_kinds: [comment, doccomment, string]
+    severity: error
+  token_font:
+    name: "Tokens only: font"
+    regex: '\.(font|fontWeight)\(|\bFont\.system\('
+    message: "Use a DesignSystem text style instead of a font."
+    excluded: '(^|/)DesignSystem/'
+    excluded_match_kinds: [comment, doccomment, string]
+    severity: error
+  token_default_padding:
+    name: "Tokens only: default padding"
+    regex: '\.padding\(\s*(\.(all|top|bottom|leading|trailing|horizontal|vertical)|\[[^\]]*\])?\s*\)'
+    message: "Pass a spacing token, e.g. .padding(.horizontal, <token>)."
+    excluded: '(^|/)DesignSystem/'
+    excluded_match_kinds: [comment, doccomment, string]
+    severity: error
+  token_stack_spacing:
+    name: "Tokens only: stack spacing"
+    regex: '\b(VStack|HStack|LazyVStack|LazyHStack)\b(?!\s*\([^)]*\bspacing:)'
+    message: "Pass spacing: with a DesignSystem spacing token (or 0)."
+    excluded: '(^|/)DesignSystem/'
+    excluded_match_kinds: [comment, doccomment, string]
+    severity: error
+  token_system_button_style:
+    name: "Tokens only: system button style"
+    regex: '\.buttonStyle\(\s*\.(bordered|borderedProminent|borderless|glass|glassProminent)\b'
+    message: "Use a DesignSystem button style or .plain."
+    excluded: '(^|/)DesignSystem/'
+    excluded_match_kinds: [comment, doccomment, string]
+    severity: error

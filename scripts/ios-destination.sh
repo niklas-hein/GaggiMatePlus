@@ -5,7 +5,7 @@
 #   IOS_SIMULATOR     simulator name to use or create (default: GaggiMatePlus)
 #
 # Without IOS_DESTINATION, this reuses the available simulator named $IOS_SIMULATOR,
-# or creates it from the newest iOS runtime and iPhone model, so CI never takes over
+# or creates it as an iPhone 18 Pro on the newest iOS runtime, so CI never takes over
 # a simulator another session is driving. It boots the simulator and leaves it running:
 # xcodebuild shuts down simulators it boots itself, which costs ~15 s on every test run.
 set -euo pipefail
@@ -24,26 +24,12 @@ udid="$(xcrun simctl list devices available |
   tail -n 1 | grep -oE "$uuid_re" || true)"
 
 if [ -z "$udid" ]; then
-  runtime="$(xcrun simctl list runtimes available |
-    grep -oE 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9-]+' |
-    sort -t- -k2,2n -k3,3n | tail -n 1)"
-  if [ -z "$runtime" ]; then
-    echo "No iOS simulator runtime installed. Install one in Xcode > Settings > Components." >&2
+  # Without a runtime argument, simctl picks the newest runtime the device supports.
+  if ! udid="$(xcrun simctl create "$name" "iPhone 18 Pro" 2>/dev/null)"; then
+    echo "Could not create an iPhone 18 Pro simulator. Install the iOS 27 runtime in Xcode > Settings > Components." >&2
     exit 1
   fi
-  # simctl lists the newest models first; take the first one the runtime accepts.
-  for devicetype in $(xcrun simctl list devicetypes |
-    grep -E '^iPhone' | grep -oE 'com\.apple\.CoreSimulator\.SimDeviceType\.[A-Za-z0-9-]+'); do
-    if udid="$(xcrun simctl create "$name" "$devicetype" "$runtime" 2>/dev/null)"; then
-      echo "Created simulator '$name' ($devicetype, $runtime)." >&2
-      break
-    fi
-    udid=""
-  done
-  if [ -z "$udid" ]; then
-    echo "Could not create an iPhone simulator for $runtime." >&2
-    exit 1
-  fi
+  echo "Created simulator '$name' (iPhone 18 Pro)." >&2
 fi
 
 xcrun simctl bootstatus "$udid" -b >/dev/null

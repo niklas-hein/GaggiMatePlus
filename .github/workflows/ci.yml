@@ -13,10 +13,23 @@ concurrency:
   group: ci-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
+env:
+  # Xcode 27.2 on the xcode-27 image, the same build as local development.
+  DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
+
 jobs:
+  lint:
+    name: Lint
+    runs-on: xcode-27
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v5
+      - run: just lint
+
   build:
     name: Build
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -25,11 +38,11 @@ jobs:
 
   test:
     name: Test ${{ matrix.module }}
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 20
     env:
       # A simulator the runner image ships with; xcodebuild boots it.
-      IOS_DESTINATION: platform=iOS Simulator,name=iPhone 17
+      IOS_DESTINATION: platform=iOS Simulator,name=iPhone 18 Pro
     strategy:
       fail-fast: false
       matrix:
@@ -43,14 +56,15 @@ jobs:
   # The check main requires. It passes only when every job above passed, so new jobs need no ruleset change.
   ci:
     name: CI
-    needs: [build, test]
+    needs: [lint, build, test]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - env:
+          LINT: ${{ needs.lint.result }}
           BUILD: ${{ needs.build.result }}
           TEST: ${{ needs.test.result }}
         run: |
-          echo "Build: $BUILD, Test: $TEST"
-          [ "$BUILD" = success ] && [ "$TEST" = success ]
+          echo "Lint: $LINT, Build: $BUILD, Test: $TEST"
+          [ "$LINT" = success ] && [ "$BUILD" = success ] && [ "$TEST" = success ]
