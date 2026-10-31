@@ -25,6 +25,7 @@ public struct ShellView: View {
             SidebarView()
         }
         .tint(.espresso)
+        .shimmerSpace()
     }
 
     private var screen: Color {
