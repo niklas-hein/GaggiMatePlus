@@ -14,20 +14,23 @@ Native iOS client for the [GaggiMate](https://github.com/jniebuhr/gaggimate) esp
 Every module is a static framework defined in `Project.swift`, with sources in `<Module>/Sources` and Swift Testing tests in `<Module>/Tests`. The `GaggiMatePlus` scheme runs all tests; each module with tests also has a scheme of its own (`testScheme(for:)`) and a `Test <Module>` CI job. A new test target needs both: the scheme in `Project.swift` and the module in the test matrix in `.github/workflows/ci.yml`. Every direct dependency:
 
 ```text
-GaggiMatePlus (app) ──> UI / Networking / DesignSystem / Models
-UI                  ──> DesignSystem / Models
+GaggiMatePlus (app) ──> UI / Navigation / Networking / DesignSystem / Models
+UI                  ──> Navigation / DesignSystem / Models
+Navigation          ──> (nothing)
 Networking          ──> Models
 DesignSystem        ──> (nothing)
 Models              ──> (nothing)
 ModelsTests         ──> Models
+NavigationTests     ──> Navigation
 NetworkingTests     ──> Networking / Models
 ```
 
-- `App/`: the app target and composition root. It creates the Networking client, feeds its events into the store, and hands the store and commands to the UI through the environment. For now it has only the entry point and `RootView`.
+- `App/`: the app target and composition root. It creates the Networking client, feeds its events into the store, and hands the store, the commands and the navigation coordinator to the UI through the environment. For now it creates only the coordinator.
 - `Models`: Codable message types, machine state (including the partial `evt:status` merge), the `@Observable` store, and the command protocol that Networking implements.
+- `Navigation`: the `@Observable` coordinator that owns all navigation, as in Nell. For now it holds the selected root (Brew or Machine) and whether the sidebar is open.
 - `Networking`: the WebSocket client.
-- `UI`: SwiftUI screens. It never imports Networking; previews use fakes.
-- `DesignSystem`: colours, typography and reusable styles.
+- `UI`: SwiftUI screens, and the shell: the sidebar behind the main screen, which pushes it aside. It never imports Networking; previews use fakes. Its colours are Display P3 sets in `UI/Resources/Colors.xcassets`, named for the colour (`Coral`), not its role; code uses Xcode's generated accessors (`.coral`), which are internal to the module that owns the catalog.
+- `DesignSystem`: measurements, motion, typography and reusable styles.
 
 ## Build and test
 
@@ -36,7 +39,7 @@ Every command runs through `just` (see `justfile`); mise only pins tool versions
 **Local CI:** `just ci`
 
 - `just`: list recipes.
-- `just lint`: SwiftLint in strict mode, so every warning fails (config: `.swiftlint.yml`, adapted from Mastermind's). Its custom "Tokens only" rules keep literal numbers, colours and fonts out of UI code; only `DesignSystem` defines values.
+- `just lint`: SwiftLint in strict mode, so every warning fails (config: `.swiftlint.yml`, adapted from Mastermind's). Its custom "Tokens only" rules keep literal numbers, colours and fonts out of UI code; `DesignSystem` defines the values, and the asset catalog the colours.
 - `just project`: generate the Xcode workspace with Tuist.
 - `just build`: build the app for the simulator.
 - `just test`: run every module's unit tests. `just test <Module>` (for example `just test Models`) runs one module's.

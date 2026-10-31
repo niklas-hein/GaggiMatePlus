@@ -1,11 +1,14 @@
+import Navigation
 import SwiftUI
+import UI
 
 struct RootView: View {
     var body: some View {
-        ContentUnavailableView("GaggiMate+", systemImage: "cup.and.saucer", description: Text("Work in progress"))
+        ShellView()
     }
 }
 
 #Preview {
     RootView()
+        .environment(Coordinator())
 }

@@ -4,8 +4,8 @@ let bundleId = "dev.niklashein.gaggimateplus"
 let destinations: Destinations = [.iPhone, .iPad]
 let deploymentTargets: DeploymentTargets = .iOS("27.0")
 
-/// A static framework with its sources in `<name>/Sources`.
-func module(_ name: String, dependencies: [TargetDependency] = []) -> Target {
+/// A static framework with its sources in `<name>/Sources`, and its resources in `<name>/Resources` if it has any.
+func module(_ name: String, hasResources: Bool = false, dependencies: [TargetDependency] = []) -> Target {
     .target(
         name: name,
         destinations: destinations,
@@ -13,7 +13,12 @@ func module(_ name: String, dependencies: [TargetDependency] = []) -> Target {
         bundleId: "\(bundleId).\(name.lowercased())",
         deploymentTargets: deploymentTargets,
         sources: ["\(name)/Sources/**"],
-        dependencies: dependencies
+        resources: hasResources ? ["\(name)/Resources/**"] : nil,
+        dependencies: dependencies,
+        // Makes Xcode's generated asset accessors load from Tuist's resource bundle (`Bundle.module`).
+        settings: hasResources
+            ? .settings(base: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) SWIFT_PACKAGE"])
+            : nil
     )
 }
 
@@ -43,6 +48,8 @@ let project = Project(
     name: "GaggiMatePlus",
     options: .options(automaticSchemesOptions: .disabled),
     settings: .settings(base: [
+        // Xcode's generated asset accessors, such as `Color.coral`, instead of Tuist's.
+        "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
         "SWIFT_VERSION": "6.0",
         "SWIFT_STRICT_CONCURRENCY": "complete",
         "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
@@ -75,26 +82,35 @@ let project = Project(
             sources: ["App/Sources/**"],
             dependencies: [
                 .target(name: "UI"),
+                .target(name: "Navigation"),
                 .target(name: "Networking"),
                 .target(name: "DesignSystem"),
                 .target(name: "Models"),
             ]
         ),
-        module("UI", dependencies: [.target(name: "DesignSystem"), .target(name: "Models")]),
+        module(
+            "UI",
+            hasResources: true,
+            dependencies: [.target(name: "Navigation"), .target(name: "DesignSystem"), .target(name: "Models")]
+        ),
+        module("Navigation"),
         module("Networking", dependencies: [.target(name: "Models")]),
         module("DesignSystem"),
         module("Models"),
         tests(for: "Models", dependencies: [.target(name: "Models")]),
+        tests(for: "Navigation", dependencies: [.target(name: "Navigation")]),
         tests(for: "Networking", dependencies: [.target(name: "Networking"), .target(name: "Models")]),
     ],
     schemes: [
         .scheme(
             name: "GaggiMatePlus",
             buildAction: .buildAction(targets: ["GaggiMatePlus"]),
-            testAction: .targets(["ModelsTests", "NetworkingTests"]),
+            testAction: .targets(["ModelsTests", "NavigationTests", "NetworkingTests"]),
             runAction: .runAction(executable: "GaggiMatePlus")
         ),
         testScheme(for: "Models"),
+        testScheme(for: "Navigation"),
         testScheme(for: "Networking"),
-    ]
+    ],
+    resourceSynthesizers: []
 )

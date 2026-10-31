@@ -53,7 +53,7 @@ jobs:
       fail-fast: false
       matrix:
         # Every module with a test target (`<Module>/Tests` and a scheme in Project.swift).
-        module: [Models, Networking]
+        module: [Models, Navigation, Networking]
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v5

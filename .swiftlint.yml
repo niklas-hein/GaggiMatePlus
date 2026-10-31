@@ -3,6 +3,7 @@ included:
   - App
   - DesignSystem
   - Models
+  - Navigation
   - Networking
   - UI
   - Project.swift
