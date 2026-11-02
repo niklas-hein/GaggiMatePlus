@@ -31,7 +31,7 @@ struct SidebarContainer<Foreground: View, Sidebar: View>: View {
 
     private var layers: some View {
         ZStack(alignment: .leading) {
-            Color.cream
+            Color.porcelain
 
             sidebarLayer
 

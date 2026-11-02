@@ -15,9 +15,6 @@ public enum SidebarLayout {
     public static let flickVelocity: CGFloat = 350 // pt/s
     public static let horizontalBias: CGFloat = 1.2
     public static let settleThreshold: CGFloat = 0.5
-
-    public static let machineRowHeight: CGFloat = 66
-    public static let machineDiscSize: CGFloat = 42
 }
 
 public enum SidebarMotion {
