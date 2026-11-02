@@ -95,12 +95,6 @@ private extension MachineWarning {
     }
 }
 
-private extension Double {
-    var degrees: String {
-        formatted(.number.precision(.fractionLength(0))) + "°"
-    }
-}
-
 #Preview("Machine row") {
     let statuses: [MachineStatus] = [
         .offline,

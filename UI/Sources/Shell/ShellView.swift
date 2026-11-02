@@ -12,7 +12,6 @@ public struct ShellView: View {
         SidebarContainer {
             NavigationStack {
                 screen
-                    .ignoresSafeArea()
                     // The new screen appears at once under the sidebar, which then slides shut over it.
                     .animation(nil, value: coordinator.selectedRoot)
                     .toolbar {
@@ -21,6 +20,7 @@ public struct ShellView: View {
                         }
                     }
             }
+            .id(coordinator.selectedRoot)
         } sidebar: {
             SidebarView()
         }
@@ -28,10 +28,11 @@ public struct ShellView: View {
         .shimmerSpace()
     }
 
-    private var screen: Color {
+    @ViewBuilder
+    private var screen: some View {
         switch coordinator.selectedRoot {
-        case .brew: .coral
-        case .machine: .taupe
+        case .brew: Color.coral.ignoresSafeArea()
+        case .machine: MachineView()
         }
     }
 }
