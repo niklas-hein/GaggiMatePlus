@@ -7,8 +7,16 @@ struct MachineView: View {
 
     var body: some View {
         ScrollView {
-            BoilerCard(readings: readings, state: .ready)
-                .padding(.horizontal, .spacing16)
+            VStack(alignment: .leading, spacing: .spacing32) {
+                BoilerCard(readings: readings, state: .ready)
+                WaterAndCleaningSection(
+                    isWaterLow: false,
+                    isFlushing: false,
+                    backflush: CleaningState(reminder: .notDue),
+                    descaling: CleaningState(reminder: .due)
+                )
+            }
+            .padding(.horizontal, .spacing16)
         }
         .background(.cream)
         .navigationBar(title: "Machine")
@@ -18,10 +26,6 @@ struct MachineView: View {
 private enum BoilerState: Equatable {
     case ready
     case heating
-    case flushing
-    case backflushing
-    case descaling
-    case updating
     case error(code: Int)
 }
 
@@ -90,7 +94,7 @@ private struct StatePill: View {
                 Text(shown.title)
                     .boldSubheadlineText()
                     .foregroundStyle(shown.ink)
-                    .shimmering(shown.isInProgress)
+                    .shimmering(shown == .heating)
                     .fixedSize()
                     .opacity(titleOpacity)
             }
@@ -166,6 +170,8 @@ private struct ErrorDetailsSheet: View {
                     Text("Open documentation")
                         .headlineText()
                         .frame(maxWidth: .infinity)
+                        // Espresso, the tint, is near white in dark mode.
+                        .foregroundStyle(.milk)
                 }
                 .buttonStyle(.primaryAction)
                 .controlSize(.large)
@@ -205,10 +211,6 @@ private extension BoilerState {
         switch self {
         case .ready: "Ready"
         case .heating: "Heating"
-        case .flushing: "Flushing"
-        case .backflushing: "Backflushing"
-        case .descaling: "Descaling"
-        case .updating: "Updating"
         case .error: "Error"
         }
     }
@@ -217,15 +219,7 @@ private extension BoilerState {
         switch self {
         case .ready: .seafoam
         case .heating: .peach
-        case .flushing, .backflushing, .descaling, .updating: .powder
         case .error: .blush
-        }
-    }
-
-    var isInProgress: Bool {
-        switch self {
-        case .heating, .flushing, .backflushing, .descaling, .updating: true
-        case .ready, .error: false
         }
     }
 
@@ -233,14 +227,13 @@ private extension BoilerState {
         switch self {
         case .ready: .jade
         case .heating: .terracotta
-        case .flushing, .backflushing, .descaling, .updating: .denim
         case .error: .raspberry
         }
     }
 }
 
 #Preview("Boiler card") {
-    let states: [BoilerState] = [.ready, .heating, .flushing, .backflushing, .descaling, .updating, .error(code: 4)]
+    let states: [BoilerState] = [.ready, .heating, .error(code: 4)]
     NavigationStack {
         ScrollView {
             VStack(spacing: .spacing16) {
