@@ -14,7 +14,7 @@ struct BoilerDetailView: View {
             charts
                 .padding(.horizontal, .spacing16)
         }
-        .background(.cream)
+        .background(.mist)
         .navigationBar(title: "Boiler")
     }
 
@@ -24,7 +24,7 @@ struct BoilerDetailView: View {
             VStack(alignment: .leading, spacing: .spacing8) {
                 Text(timeLabel)
                     .subheadlineText()
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
                 ValueLabel(
                     kind: .temperature,
                     text: BoilerSeries.temperature.text(for: value(of: .temperature)),
@@ -150,7 +150,7 @@ private struct ValueLabel: View {
             Label {
                 Text(kind.name)
                     .subheadlineText()
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
             } icon: {
                 Image(systemName: "circle.fill")
                     .imageScale(.small)
@@ -160,12 +160,12 @@ private struct ValueLabel: View {
                 Text(text)
                     .headlineText()
                     .monospacedDigit()
-                    .foregroundStyle(.espresso)
+                    .foregroundStyle(.ink)
                 if let detail {
                     Text(detail)
                         .subheadlineText()
                         .monospacedDigit()
-                        .foregroundStyle(.cocoa)
+                        .foregroundStyle(.slate)
                 }
             }
         }
@@ -185,7 +185,7 @@ private struct TimeChart: View {
         Chart {
             if let target {
                 RuleMark(y: .value("Target", target))
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
                     .lineStyle(.dashed)
             }
             ForEach(kinds) { kind in
@@ -202,7 +202,7 @@ private struct TimeChart: View {
             }
             if let selection {
                 RuleMark(x: .value("Selected", selection))
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
             }
         }
         .chartYScale(domain: domain)
@@ -211,7 +211,7 @@ private struct TimeChart: View {
         .chartXAxis {
             AxisMarks { _ in
                 AxisValueLabel()
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
             }
         }
         .chartXSelection(value: $selection)

@@ -11,7 +11,7 @@ struct SidebarView: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, .spacing12)
-        .background(.porcelain)
+        .background(.frost)
     }
 }
 
@@ -33,7 +33,7 @@ private struct MachineRow: View {
                     Text("Machine")
                     Text(status.subtitle)
                         .secondarySubheadlineText()
-                        .foregroundStyle(.cocoa)
+                        .foregroundStyle(.slate)
                         .shimmering(status.isInProgress)
                 }
             }
@@ -42,56 +42,11 @@ private struct MachineRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .buttonStyle(.highlight(isSelected: isSelected))
-        .foregroundStyle(.espresso)
+        .foregroundStyle(.ink)
     }
 
     private var isSelected: Bool {
         coordinator.selectedRoot == .machine
-    }
-}
-
-private extension MachineStatus {
-    var subtitle: String {
-        switch self {
-        case .offline: "Offline"
-        case .connecting: "Connecting…"
-        case .error: "Error"
-        case let .updating(progress): "Updating · \(progress)%"
-        case .starting: "Starting…"
-        case .needsUpdate: "Needs update"
-        case .autotuning: "Autotuning"
-        case .flushing: "Flushing"
-        case .backflushing: "Backflushing"
-        case .descaling: "Descaling"
-        case .standby: "Standby"
-        case let .warning(warning, others): others > 0 ? "\(warning.title) · +\(others)" : warning.title
-        case let .heating(temperature): "Heating · \(temperature.degrees)"
-        case let .steam(temperature): "Steam · \(temperature.degrees)"
-        case .hotWater: "Hot water"
-        case .updateAvailable: "Update available"
-        case let .ready(temperature): "Ready · \(temperature.degrees)"
-        }
-    }
-
-    var isInProgress: Bool {
-        switch self {
-        case .connecting, .updating, .starting, .autotuning, .flushing, .backflushing, .descaling, .heating:
-            true
-        case .offline, .error, .needsUpdate, .standby, .warning, .steam, .hotWater, .updateAvailable, .ready:
-            false
-        }
-    }
-}
-
-private extension MachineWarning {
-    var title: String {
-        switch self {
-        case .waterLow: "Water low"
-        case .backflushDue: "Backflush due"
-        case .descaleDue: "Descale due"
-        case .noScale: "No scale"
-        case .scaleBatteryLow: "Scale battery low"
-        }
     }
 }
 
@@ -127,6 +82,6 @@ private extension MachineWarning {
         }
         .padding(.horizontal, .spacing16)
     }
-    .background(.porcelain)
+    .background(.frost)
     .environment(Coordinator())
 }
