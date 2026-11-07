@@ -31,7 +31,7 @@ public struct ShellView: View {
     @ViewBuilder
     private var screen: some View {
         switch coordinator.selectedRoot {
-        case .brew: Color.coral.ignoresSafeArea()
+        case .brew: BrewView()
         case .machine: MachineView()
         }
     }
