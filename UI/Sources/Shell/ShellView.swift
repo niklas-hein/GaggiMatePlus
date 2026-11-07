@@ -24,7 +24,7 @@ public struct ShellView: View {
         } sidebar: {
             SidebarView()
         }
-        .tint(.espresso)
+        .tint(.ink)
         .shimmerSpace()
     }
 

@@ -18,7 +18,7 @@ struct MachineView: View {
             }
             .padding(.horizontal, .spacing16)
         }
-        .background(.cream)
+        .background(.mist)
         .navigationBar(title: "Machine")
     }
 }
@@ -45,18 +45,18 @@ private struct BoilerCard: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Boiler")
                             .boldSubheadlineText()
-                            .foregroundStyle(.cocoa)
+                            .foregroundStyle(.slate)
                         Text(readings.temperature.degrees)
                             .heavyLargeTitleText()
                             .monospacedDigit()
-                            .foregroundStyle(.espresso)
+                            .foregroundStyle(.ink)
                     }
                     Spacer(minLength: 0)
                     StatePill(state: state)
                 }
                 .padding(.horizontal, .spacing20)
                 .padding(.vertical, .spacing12)
-                .background(.milk)
+                .background(.snow)
                 .matchedTransitionSource(id: "boiler", in: zoom)
             }
             .buttonStyle(.plain)
@@ -67,7 +67,7 @@ private struct BoilerCard: View {
                     .transition(.move(edge: .top))
             }
         }
-        .background(.milk)
+        .background(.snow)
         .clipShape(.rect(cornerRadius: .radius26))
         .animation(.stateChange, value: state)
     }
@@ -128,14 +128,14 @@ private struct BoilerErrorRow: View {
                 .foregroundStyle(.raspberry)
             Text(ErrorCode.title(for: code))
                 .headlineText()
-                .foregroundStyle(.espresso)
+                .foregroundStyle(.ink)
             Spacer(minLength: 0)
             Button("Details", systemImage: "info.circle") {
                 showsDetails = true
             }
             .labelStyle(.iconOnly)
             .imageScale(.large)
-            .foregroundStyle(.cocoa)
+            .foregroundStyle(.slate)
         }
         .padding(.horizontal, .spacing20)
         .padding(.vertical, .spacing12)
@@ -160,18 +160,18 @@ private struct ErrorDetailsSheet: View {
             VStack(alignment: .leading, spacing: .spacing8) {
                 Text(ErrorCode.title(for: code))
                     .boldTitle2Text()
-                    .foregroundStyle(.espresso)
+                    .foregroundStyle(.ink)
                 Text("Error code \(code)")
                     .subheadlineText()
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
                     .padding(.bottom, .spacing32)
                 // The docs have no page on error codes yet; troubleshooting is the closest.
                 Link(destination: ErrorCode.documentation) {
                     Text("Open documentation")
                         .headlineText()
                         .frame(maxWidth: .infinity)
-                        // Espresso, the tint, is near white in dark mode.
-                        .foregroundStyle(.milk)
+                        // Ink, the tint, is near white in dark mode.
+                        .foregroundStyle(.snow)
                 }
                 .buttonStyle(.primaryAction)
                 .controlSize(.large)
@@ -243,6 +243,6 @@ private extension BoilerState {
             }
             .padding(.horizontal, .spacing16)
         }
-        .background(.cream)
+        .background(.mist)
     }
 }
