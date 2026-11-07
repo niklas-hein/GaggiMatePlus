@@ -11,7 +11,7 @@ struct SidebarView: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, .spacing12)
-        .background(.porcelain)
+        .background(.frost)
     }
 }
 
@@ -33,7 +33,7 @@ private struct MachineRow: View {
                     Text("Machine")
                     Text(status.subtitle)
                         .secondarySubheadlineText()
-                        .foregroundStyle(.cocoa)
+                        .foregroundStyle(.slate)
                         .shimmering(status.isInProgress)
                 }
             }
@@ -42,7 +42,7 @@ private struct MachineRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .buttonStyle(.highlight(isSelected: isSelected))
-        .foregroundStyle(.espresso)
+        .foregroundStyle(.ink)
     }
 
     private var isSelected: Bool {
@@ -127,6 +127,6 @@ private extension MachineWarning {
         }
         .padding(.horizontal, .spacing16)
     }
-    .background(.porcelain)
+    .background(.frost)
     .environment(Coordinator())
 }

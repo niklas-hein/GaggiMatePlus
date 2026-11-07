@@ -86,14 +86,14 @@ struct CleaningRow: View {
                 IconDisc(systemName: task.iconName(isDue: state.reminder == .due))
                 Text(task.title)
                     .headlineText()
-                    .foregroundStyle(.espresso)
+                    .foregroundStyle(.ink)
                 Spacer(minLength: 0)
                 status
             }
             .padding(.leading, .spacing20)
             .padding(.trailing, .spacing12)
             .padding(.vertical, .spacing12)
-            .background(.milk)
+            .background(.snow)
             .contentShape(.contextMenuPreview, .rect(cornerRadius: .radius26))
             .contextMenu {
                 if state.reminder != .off && !state.isRunning {
@@ -149,7 +149,7 @@ struct CleaningRow: View {
                     showsPreparation = true
                 }
             }
-            .foregroundStyle(.espresso)
+            .foregroundStyle(.ink)
         }
     }
 }
@@ -173,21 +173,21 @@ private struct CleaningSheet: View {
             VStack(alignment: .leading, spacing: .spacing8) {
                 Text(task.title)
                     .boldTitle2Text()
-                    .foregroundStyle(.espresso)
+                    .foregroundStyle(.ink)
                 Text("Before you start")
                     .subheadlineText()
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
                 VStack(alignment: .leading, spacing: .spacing12) {
                     ForEach(task.steps.indices, id: \.self) { index in
                         Label(task.steps[index], systemImage: "\(index + 1).circle.fill")
                     }
                 }
                 .headlineText()
-                .foregroundStyle(.espresso)
+                .foregroundStyle(.ink)
                 .padding(.vertical, .spacing12)
                 Toggle("Don't ask again", isOn: $stopsAsking)
                     .subheadlineText()
-                    .foregroundStyle(.cocoa)
+                    .foregroundStyle(.slate)
                     .tint(.jade)
                     .padding(.vertical, .spacing12)
                 Button {
@@ -200,8 +200,8 @@ private struct CleaningSheet: View {
                     Text(task.startTitle)
                         .headlineText()
                         .frame(maxWidth: .infinity)
-                        // Espresso, the tint, is near white in dark mode.
-                        .foregroundStyle(.milk)
+                        // Ink, the tint, is near white in dark mode.
+                        .foregroundStyle(.snow)
                 }
                 .buttonStyle(.primaryAction)
                 .controlSize(.large)

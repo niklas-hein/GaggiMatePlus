@@ -31,7 +31,7 @@ struct SidebarContainer<Foreground: View, Sidebar: View>: View {
 
     private var layers: some View {
         ZStack(alignment: .leading) {
-            Color.porcelain
+            Color.frost
 
             sidebarLayer
 
@@ -70,9 +70,9 @@ struct SidebarContainer<Foreground: View, Sidebar: View>: View {
         foreground
             .safeAreaPadding(safeAreaInsets)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.cream)
+            .background(.mist)
             .overlay {
-                Color.cream
+                Color.mist
                     .opacity(SidebarLayout.foregroundDimming * Double(progress))
                     .allowsHitTesting(false)
             }

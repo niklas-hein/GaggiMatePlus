@@ -11,7 +11,7 @@ struct WaterAndCleaningSection: View {
         VStack(alignment: .leading, spacing: .spacing8) {
             Text("Water and cleaning")
                 .boldSubheadlineText()
-                .foregroundStyle(.cocoa)
+                .foregroundStyle(.slate)
                 .padding(.horizontal, .spacing20)
             VStack(spacing: 0) {
                 WaterTankRow(isLow: isWaterLow)
@@ -25,7 +25,7 @@ struct WaterAndCleaningSection: View {
                     .padding(.leading, .spacing20)
                 CleaningRow(task: .descaling, state: descaling)
             }
-            .background(.milk, in: .rect(cornerRadius: .radius26))
+            .background(.snow, in: .rect(cornerRadius: .radius26))
         }
     }
 }
@@ -38,7 +38,7 @@ private struct WaterTankRow: View {
             IconDisc(systemName: isLow ? "drop" : "drop.fill")
             Text("Water tank")
                 .headlineText()
-                .foregroundStyle(.espresso)
+                .foregroundStyle(.ink)
             Spacer(minLength: 0)
             Text(isLow ? "Low" : "OK")
                 .subheadlineText()
@@ -57,7 +57,7 @@ private struct FlushRow: View {
             IconDisc(systemName: "water.waves")
             Text("Group head")
                 .headlineText()
-                .foregroundStyle(.espresso)
+                .foregroundStyle(.ink)
             Spacer(minLength: 0)
             if isFlushing {
                 // Nothing connects to a machine yet, so a flush has no start time to count from.
@@ -70,7 +70,7 @@ private struct FlushRow: View {
             Button(isFlushing ? "Stop" : "Flush" as LocalizedStringKey) {}
                 .buttonStyle(.inlineAction)
                 .boldSubheadlineText()
-                .foregroundStyle(isFlushing ? Color.raspberry : Color.espresso)
+                .foregroundStyle(isFlushing ? Color.raspberry : Color.ink)
         }
         .padding(.horizontal, .spacing20)
         .padding(.vertical, .spacing12)
@@ -87,9 +87,9 @@ struct IconDisc: View {
             .overlay {
                 Image(systemName: systemName)
             }
-            .foregroundStyle(.espresso)
+            .foregroundStyle(.ink)
             .padding(.spacing8)
-            .background(.cream, in: .circle)
+            .background(.mist, in: .circle)
     }
 }
 
@@ -111,5 +111,5 @@ struct IconDisc: View {
         }
         .padding(.horizontal, .spacing16)
     }
-    .background(.cream)
+    .background(.mist)
 }
